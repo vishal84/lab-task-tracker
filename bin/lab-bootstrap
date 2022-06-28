@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+
+const monitor = require('../src/monitor');
+const handler = require('../src/handler');
+const yargs = require('yargs');
+
+
+/**
+ * Args processing
+ */
+var argv = yargs
+    .command(
+        'monitor [task_list]',
+        'Monitor tasks',
+        function (yargs) {
+            return yargs
+                .positional('task_list', {
+                    describe: 'List of task IDs (t1,t2,etc)',
+                    type: 'string',
+                    required: false
+                });
+        },
+        async function (argv) {
+            await monitor(argv["task_list"]);
+        }
+    )
+    .command(
+        'begin <id> [name] [eta]',
+        'Begin a new task',
+        function (yargs) {
+            return yargs
+                .positional('id', {
+                    describe: 'Task ID',
+                    type: 'string',
+                    required: true
+                }).positional('name', {
+                    describe: 'Task display name',
+                    type: 'string',
+                    default: ""
+                })
+                .positional('eta', {
+                    describe: 'Expected duration (seconds)',
+                    type: 'integer',
+                    default: 60
+                })
+        },
+        async function (argv) {
+            return handler.begin(argv['id'], argv['name'], argv['eta']);
+        }
+    )
+    .command(
+        'update <id> <state>',
+        'Update existing task',
+        function (yargs) {
+            return yargs
+                .positional('id', {
+                    describe: 'Task ID',
+                    type: 'string',
+                    required: true
+                }).positional('state', {
+                    describe: 'Task state',
+                    type: 'string',
+                    required: true
+                })
+        },
+        async function (argv) {
+            return handler.update(argv['id'], argv['state']);
+        }
+    )
+    .command(
+        'end <id> [state]',
+        'End an existing task',
+        function (yargs) {
+            return yargs
+                .positional('id', {
+                    describe: 'Task ID',
+                    type: 'string',
+                    required: true
+                })
+                .positional('state', {
+                    describe: 'End State',
+                    type: 'string',
+                    required: false,
+                    default: 'completed'
+                });
+        },
+        async function (argv) {
+            return handler.end(argv['id'], argv['state']);
+        }
+    ).command(
+        'fail <id> [state]',
+        'Fail an existing task',
+        function (yargs) {
+            return yargs
+                .positional('id', {
+                    describe: 'Task ID',
+                    type: 'string',
+                    required: true
+                })
+                .positional('state', {
+                    describe: 'Fail State',
+                    type: 'string',
+                    required: false,
+                    default: 'errored'
+                });
+        },
+        async function (argv) {
+            return handler.fail(argv['id'], argv['state']);
+        }
+    )
+    .command(
+        'del <id>',
+        'Delete an existing task',
+        function (yargs) {
+            return yargs
+                .positional('id', {
+                    describe: 'Task ID',
+                    type: 'string',
+                    required: true
+                });
+        },
+        async function (argv) {
+            return handler.del(argv['id']);
+        }
+    )
+    .command(
+        'list',
+        'List tasks',
+        function (yargs) {},
+        async function (argv) {
+            return handler.list();
+        }
+    )
+    .demandCommand(1, 'No command was specifed')
+    .version("1.0")
+    .argv;

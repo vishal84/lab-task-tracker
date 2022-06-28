@@ -1,0 +1,24 @@
+{
+  "name": "lab-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/lab-bootstrap",
+  "bin": "./bin/lab-bootstrap",
+  "scripts": {
+    "build:linux": "pkg -o dist/linux/lab-bootstrap --targets node12-linux-x64 . && chmod a+x ./dist/linux/*",
+    "build:macos": "pkg -o dist/macos/lab-bootstrap  --targets node12-macos-x64 . && chmod a+x ./dist/linux/*",
+    "build": "pkg -o dist/macos/lab-bootstrap  --targets node12-macos-x64 . && chmod a+x ./dist/linux/* && pkg -o dist/linux/lab-bootstrap --targets node12-linux-x64 . && chmod a+x ./dist/linux/* "
+
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cli-progress": "^3.8.2",
+    "colors": "^1.4.0",
+    "date-fns": "^2.14.0",
+    "yargs": "^15.4.1"
+  },
+  "devDependencies": {
+    "pkg": "^4.4.9"
+  }
+}
